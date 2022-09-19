@@ -25,11 +25,27 @@ def get_words(highlight_coulors, page):
     highlight_text = []
 
     for colour, h in highlight_coulors:
+        sentance_array=[]
         for word in all_words:
             word_rect=fitz.Rect(word[0:4])
             if word_rect.x0>=(h.x0-2) and word_rect.x1<=(h.x1+2) and word_rect.y0>=(h.y0-8) and word_rect.y1<=(h.y1+2):
-                print(word[4], colour )
-                highlight_text.append([word[4], colour])
+                sentance_array.append(word[4])
+                
+        
+        #a removing duplaated words that excist within the fizz liberry where get_text_words duplicates some words
+        for word in sentance_array:
+            first_instance=sentance_array.index(word)
+            try:
+                second_instance=sentance_array.index(word, first_instance+1)
+                instance_difrance = second_instance-first_instance
+                if instance_difrance < 4:
+                    for counter in range(first_instance,second_instance):
+                        sentance_array.pop(first_instance+instance_difrance)
+            except ValueError:
+                pass
+        #turrning the array into a string of sentances
+        sentance=' '.join(word for word in sentance_array)
+        highlight_text.append([sentance,colour])
     return highlight_text
 
 
@@ -75,6 +91,7 @@ def main():
 
     highlightInformation = get_coords_and_coluors(testPage)
     highlight_text = get_words(highlightInformation, testPage)
+    print(highlight_text)
 
 
 if __name__ == "__main__":
